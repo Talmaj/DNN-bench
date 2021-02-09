@@ -4,11 +4,13 @@ import json
 from utils import get_input_sample
 
 
-def main(model_path, backend, repeat=1000, number=1, warmup=100, device="cpu"):
+def main(
+    model_path, backend, repeat=1000, number=1, warmup=100, device="cpu", quantize=False
+):
     if backend == "onnxruntime":
         from bench_onnxruntime import benchmark_onnxruntime
 
-        res = benchmark_onnxruntime(model_path, repeat, number, warmup)
+        res = benchmark_onnxruntime(model_path, repeat, number, warmup, quantize)
     elif backend == "pytorch":
         import onnx
         from onnx2pytorch import ConvertModel
@@ -24,8 +26,10 @@ def main(model_path, backend, repeat=1000, number=1, warmup=100, device="cpu"):
             repeat=repeat,
             number=number,
             warmup=warmup,
+            quantize=quantize,
         )
     elif backend == "tf":
+        assert not quantize, "Use tf-lite to quantize tensorflow models."
         import onnx
         from onnx_tf.backend import prepare
         from bench_tf import benchmark_tf
@@ -48,6 +52,7 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default="cpu", help="Device backend")
     parser.add_argument("--repeat", type=int, default=1000, help="Benchmark repeats")
     parser.add_argument("--number", type=int, default=1, help="Benchmark number")
+    parser.add_argument("--quantize", type=bool, default=False, help="Quantize or not")
     parser.add_argument(
         "--warmup",
         type=int,
@@ -70,6 +75,7 @@ if __name__ == "__main__":
         args.number,
         args.warmup,
         args.device,
+        args.quantize,
     )
 
     out = dict(args._get_args())

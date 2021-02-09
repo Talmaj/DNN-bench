@@ -10,6 +10,7 @@ def benchmark_pytorch(
     repeat=1000,
     number=1,
     warmup=100,
+    quantize=False,
 ):
     """
     Parameters
@@ -26,6 +27,8 @@ def benchmark_pytorch(
         Number of forward passes in each experiment. Default: 1
     warmup: int
         Number of disregarded experiments. Default: 100
+    quantize: bool
+        Dynamically quantize the model with default parameters.
 
     Returns
     -------
@@ -35,6 +38,8 @@ def benchmark_pytorch(
     """
     if isinstance(device, str):
         device = torch.device(device)
+    if quantize:
+        torch.quantization.quantize_dynamic(model)
     model.eval()
     model.to(device)
 

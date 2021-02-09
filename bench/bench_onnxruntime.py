@@ -1,24 +1,31 @@
 import os
 
 import numpy as np
+import onnx
+from onnx import version_converter
 import onnxruntime as ort
+from onnxruntime.quantization import quantize_dynamic
 
 from utils import get_type, get_shape
 from bench import benchmark_speed
 
 
-def benchmark_onnxruntime(path_or_model, repeat=1000, number=1, warmup=100):
+def benchmark_onnxruntime(
+    path_to_model, repeat=1000, number=1, warmup=100, quantize=False
+):
     """
     Parameters
     ----------
-    path_or_model: str or onnx.ModelProto
-        Path to an onnx model or a loaded onnx model.
+    path_to_model: str or onnx.ModelProto
+        Path to an onnx model.
     repeat: int
         Repetition of experiment. Default: 1000
     number: int
         Number of forward passes in each experiment. Default: 1
     warmup: int
         Number of disregarded experiments. Default: 100
+    quantize: bool
+        Dynamically quantize the model with default parameters.
 
     Returns
     -------
@@ -28,16 +35,21 @@ def benchmark_onnxruntime(path_or_model, repeat=1000, number=1, warmup=100):
     """
     assert repeat >= 2 * warmup
 
-    if isinstance(path_or_model, str):
-        size = os.path.getsize(path_or_model)
-        sess = ort.InferenceSession(path_or_model)
-    # elif isinstance(path_or_model, onnx.ModelProto):
-    #     bitstream = path_or_model.SerializeToString()
-    #     size = len(bitstream)
-    #     sess = ort.InferenceSession(bitstream)
-    #     del bitstream
+    if quantize:
+        orig_model = onnx.load(path_to_model)
+        if orig_model.opset_import[0].version < 11:
+            converted_model = version_converter.convert_version(orig_model, 11)
+            path_to_model = '/tmp/model_conv.onnx'
+            with open(path_to_model, 'wb') as f:
+                f.write(converted_model.SerializeToString())
+            del orig_model, converted_model
+        path_to_quant_model = "/tmp/model_quant.onnx"
+        model = quantize_dynamic(path_to_model, path_to_quant_model)
+        size = os.path.getsize(path_to_quant_model)
+        sess = ort.InferenceSession(path_to_quant_model)
     else:
-        raise TypeError
+        size = os.path.getsize(path_to_model)
+        sess = ort.InferenceSession(path_to_model)
 
     inputs = {
         x.name: np.random.randn(*get_shape(x)).astype(get_type(x))
