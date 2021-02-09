@@ -58,6 +58,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--backend-meta", type=str, default="", help="Additional backend info"
     )
+    parser.add_argument(
+        "--output-path", type=str, default="", help="Where to store results"
+    )
 
     args = parser.parse_args()
 
@@ -73,4 +76,11 @@ if __name__ == "__main__":
     out = dict(args._get_args())
     out.update(dict(args._get_kwargs()))
     out.update(res)
-    print(json.dumps(out))
+
+    output_path = args.output_path
+    if output_path:
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        with open(output_path, "w") as f:
+            print(json.dumps(out), file=f)
+    else:
+        print(json.dumps(out))

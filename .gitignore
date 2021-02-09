@@ -1,5 +1,6 @@
 .idea/
 results/
+models/
 
 __pycache__/
 *.pyc

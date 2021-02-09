@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 for ARGUMENT in "$@"
 do
@@ -17,6 +17,7 @@ do
               --number)          number=${VALUE}  ;;
               --warmup)          warmup=${VALUE}  ;;
               --device)          device=${VALUE}  ;;
+              --output)          output=${VALUE}  ;;
               *)
       esac
     else
@@ -30,40 +31,47 @@ repeat=${repeat:-1000}
 number=${number:-1}
 warmup=${warmup:-100}
 device=${device:-cpu}
+output=${output:-$(pwd)/results}
+name=$(echo $(basename $model) | cut -f1 -d .)
 
 cwd=$(pwd)
 
 if [[ -n $pytorch ]]; then
   echo PyTorch
-  docker run --rm -v $cwd/bench:/bench -v $model:$model pytorch:latest \
+  docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output pytorch:latest \
   python3 /bench $model --backend pytorch --repeat $repeat --number $number --warmup $warmup \
-  --backend-meta onnx2pytorch --device $device
+  --backend-meta onnx2pytorch --device $device \
+  --output-path $output/"$name"-pytorch-onnx2pytorch.json
 fi
 
 if [[ -n $onnxruntime ]]; then
   echo OpenMP
-  docker run --rm -v $cwd/bench:/bench -v $model:$model mcr.microsoft.com/azureml/onnxruntime:latest \
+  docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output mcr.microsoft.com/azureml/onnxruntime:latest \
   python3 /bench $model --backend onnxruntime --repeat $repeat --number $number --warmup $warmup \
-  --backend-meta openmp --device $device
+  --backend-meta openmp --device $device \
+  --output-path $output/"$name"-onnxruntime-openmp.json
 fi
 
 if [[ -n $openvino ]]; then
   echo OpenVino
-  docker run --rm -v $cwd/bench:/bench -v $model:$model mcr.microsoft.com/azureml/onnxruntime:latest-openvino-cpu \
+  docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output mcr.microsoft.com/azureml/onnxruntime:latest-openvino-cpu \
   python3 /bench $model --backend onnxruntime --repeat $repeat --number $number --warmup $warmup \
-  --backend-meta openvino --device $device
+  --backend-meta openvino --device $device \
+  --output-path $output/"$name"-onnxruntime-openvino.json
 fi
 
 if [[ -n $tvm || -n $nuphar ]]; then
   echo Nuphar
-  docker run --rm -v $cwd/bench:/bench -v $model:$model mcr.microsoft.com/azureml/onnxruntime:latest-nuphar \
+  docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output mcr.microsoft.com/azureml/onnxruntime:latest-nuphar \
   python3 /bench $model --backend onnxruntime --repeat $repeat --number $number --warmup $warmup \
-  --backend-meta nuphar --device $device
+  --backend-meta nuphar --device $device \
+  --output-path $output/"$name"-onnxruntime-nuphar.json
 fi
 
 if [[ -n $tf ]]; then
   echo TensorFlow
-  docker run --rm -v $cwd/bench:/bench -v $model:$model tensorflow:latest \
+  docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output tensorflow:latest \
   python3 /bench $model --backend tf --repeat $repeat --number $number --warmup $warmup \
-  --backend-meta onnx_tf --device $device
+  --backend-meta onnx_tf --device $device \
+  --output-path $output/"$name"-tf-onnx_tf.json
 fi
