@@ -47,6 +47,6 @@ def benchmark_onnxruntime(path_or_model, repeat=1000, number=1, warmup=100):
     def _benchmark():
         output = sess.run(None, inputs)
 
-    res = dict(size=size)
+    res = dict(size=size, input_size=[tuple(x.shape) for x in inputs.values()])
     res.update(benchmark_speed(_benchmark, repeat, number, warmup))
     return res

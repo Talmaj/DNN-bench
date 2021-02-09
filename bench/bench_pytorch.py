@@ -5,8 +5,7 @@ from bench import benchmark_speed
 
 def benchmark_pytorch(
     model,
-    input_size,
-    input_dtype=torch.float32,
+    input_sample,
     device=torch.device("cpu"),
     repeat=1000,
     number=1,
@@ -17,10 +16,8 @@ def benchmark_pytorch(
     ----------
     model: nn.Module
         Pytorch model.
-    input_size: tuple[int]
-        Size of the input sample.
-    input_dtype: torch.dtype
-        Dtype of the input sample. Default: torch.float32
+    input_sample: list[torch.Tensor]
+        List of the input tensors.
     device: torch.device
         Device on which to run the experiment. Default: torch.device('cpu')
     repeat: int
@@ -41,14 +38,15 @@ def benchmark_pytorch(
     model.eval()
     model.to(device)
 
-    inputs = torch.rand(input_size, device=device, dtype=input_dtype)
-    model = torch.jit.trace(model, inputs)
+    inputs = input_sample
+    input_sizes = [tuple(x.shape) for x in input_sample]
+    model = torch.jit.trace(model, inputs, check_trace=False)
     size = len(model.save_to_buffer())
 
     def _benchmark():
         with torch.no_grad():
-            output = model(inputs)
+            output = model(*inputs)
 
-    res = dict(size=size)
+    res = dict(size=size, input_size=input_sizes)
     res.update(benchmark_speed(_benchmark, repeat, number, warmup))
     return res

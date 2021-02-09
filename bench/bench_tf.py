@@ -6,8 +6,7 @@ from bench import benchmark_speed
 
 def benchmark_tf(
     model,
-    input_size,
-    input_dtype=tf.float32,
+    input_sample,
     # device=torch.device("cpu"),
     repeat=1000,
     number=1,
@@ -18,10 +17,8 @@ def benchmark_tf(
     ----------
     model: nn.Module
         Converted tensorflow model from onnx.
-    input_size: tuple[int]
+    input_sample: list[tf.Constant]]
         Size of the input sample.
-    input_dtype: torch.dtype
-        Dtype of the input sample. Default: np.float32
     device: torch.device
         Device on which to run the experiment. Default: torch.device('cpu')
     repeat: int
@@ -38,14 +35,16 @@ def benchmark_tf(
         of the experiments.
     """
 
-    inputs = tf.constant(tf.random.uniform(input_size))
-    input_dict = dict([(model.inputs[0], inputs)])
+    inputs = input_sample
+    input_sizes = [tuple(x.shape) for x in input_sample]
+    # inputs = [tf.constant(tf.random.uniform(i)) for i in input_sizes]
+    input_dict = dict(zip(model.inputs, inputs))
     # size = len(model.tf_module)
 
     def _benchmark():
         output = model.tf_module(**input_dict)
 
     # res = dict(size=size)
-    res = dict()
+    res = dict(input_size=input_sizes)
     res.update(benchmark_speed(_benchmark, repeat, number, warmup))
     return res

@@ -1,6 +1,7 @@
+import os
 import argparse
 import json
-from utils import get_inputs_size
+from utils import get_input_sample
 
 
 def main(model_path, backend, repeat=1000, number=1, warmup=100, device="cpu"):
@@ -15,11 +16,10 @@ def main(model_path, backend, repeat=1000, number=1, warmup=100, device="cpu"):
 
         onnx_model = onnx.load(model_path)
         model = ConvertModel(onnx_model)
-        input_sizes = get_inputs_size(onnx_model)
-        input_size = tuple([x.dim_value for x in input_sizes[0]])
+        input_sample = get_input_sample(onnx_model, backend=backend)
         res = benchmark_pytorch(
             model,
-            input_size,
+            input_sample,
             device=device,
             repeat=repeat,
             number=number,
@@ -31,11 +31,10 @@ def main(model_path, backend, repeat=1000, number=1, warmup=100, device="cpu"):
         from bench_tf import benchmark_tf
 
         onnx_model = onnx.load(model_path)
-        input_sizes = get_inputs_size(onnx_model)
-        input_size = tuple([x.dim_value for x in input_sizes[0]])
+        input_sample = get_input_sample(onnx_model, backend=backend)
         model = prepare(onnx_model)
         res = benchmark_tf(
-            model, input_size, repeat=repeat, number=number, warmup=warmup
+            model, input_sample, repeat=repeat, number=number, warmup=warmup
         )
     else:
         raise ValueError("backend {} does not exists".format(backend))
