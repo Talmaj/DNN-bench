@@ -1,0 +1,31 @@
+version: 2.1
+
+orbs:
+  python: circleci/docker@1.5.0
+
+jobs:
+  test:
+    machine: true
+    steps:
+      - checkout
+      #- setup_remote_docker:
+      #      docker_layer_caching: true
+      - run:
+          command: bash prepare_images.sh cpu
+          name: Prepare backend images
+          no_output_timeout: 30m
+      - run:
+          command: >
+            curl -LJo super_res.onnx https://github.com/onnx/models/blob/master/vision/super_resolution/sub_pixel_cnn_2016/model/super-resolution-10.onnx\?raw\=true &&
+            bash bench_model.sh super_res.onnx --repeat=10 --number=1 --warmup=1 --device=cpu --tf --onnxruntime --openvino --pytorch --nuphar
+          name: Benchmark model
+          no_output_timeout: 5m
+      - run:
+          command: >
+            bash bench_model.sh super_res.onnx --repeat=10 --number=1 --warmup=1 --device=cpu --onnxruntime --openvino --pytorch --nuphar --quantize
+          name: Benchmark quantized model
+          no_output_timeout: 5m
+workflows:
+  main:
+    jobs:
+      - test
