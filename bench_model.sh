@@ -29,6 +29,10 @@ do
     fi
 done
 
+realpath() {
+  echo "$(cd "$(dirname "$1")"; pwd -P)/$(basename "$1")"
+}
+
 # default parameters
 repeat=${repeat:-1000}
 number=${number:-1}
@@ -37,6 +41,10 @@ device=${device:-cpu}
 quantize=${quantize:-0}
 output=${output:-$(pwd)/results}
 name=$(echo $(basename $model) | cut -f1 -d .)
+
+# Need absolute paths for mounting docker containers
+output=$(realpath output)
+model=$(realpath model)
 
 cwd=$(pwd)
 
