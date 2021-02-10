@@ -1,10 +1,8 @@
 import os
 
 import numpy as np
-import onnx
 from onnx import version_converter
 import onnxruntime as ort
-from onnxruntime.quantization import quantize_dynamic
 
 from utils import get_type, get_shape
 from bench import benchmark_speed
@@ -36,6 +34,9 @@ def benchmark_onnxruntime(
     assert repeat >= 2 * warmup
 
     if quantize:
+        import onnx
+        from onnxruntime.quantization import quantize_dynamic
+
         orig_model = onnx.load(path_to_model)
         if orig_model.opset_import[0].version < 11:
             converted_model = version_converter.convert_version(orig_model, 11)
