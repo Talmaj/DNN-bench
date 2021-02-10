@@ -7,6 +7,7 @@ from utils import get_input_sample
 def main(
     model_path, backend, repeat=1000, number=1, warmup=100, device="cpu", quantize=False
 ):
+    quantize = bool(quantize)
     if backend == "onnxruntime":
         from bench_onnxruntime import benchmark_onnxruntime
 
@@ -22,7 +23,7 @@ def main(
         res = benchmark_pytorch(
             model,
             input_sample,
-            device=device,
+            device="cuda" if device == "gpu" else device,
             repeat=repeat,
             number=number,
             warmup=warmup,
@@ -42,6 +43,7 @@ def main(
         )
     else:
         raise ValueError("backend {} does not exists".format(backend))
+    res["device"] = device
     return res
 
 
@@ -52,7 +54,7 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default="cpu", help="Device backend")
     parser.add_argument("--repeat", type=int, default=1000, help="Benchmark repeats")
     parser.add_argument("--number", type=int, default=1, help="Benchmark number")
-    parser.add_argument("--quantize", type=bool, default=False, help="Quantize or not")
+    parser.add_argument("--quantize", type=int, default=0, help="Quantize or not")
     parser.add_argument(
         "--warmup",
         type=int,
