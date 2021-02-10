@@ -39,11 +39,11 @@ def benchmark_pytorch(
     if isinstance(device, str):
         device = torch.device(device)
     if quantize:
-        torch.quantization.quantize_dynamic(model)
+        model = torch.quantization.quantize_dynamic(model)
     model.eval()
     model.to(device)
 
-    inputs = input_sample
+    inputs = [x.to(device) for x in input_sample]
     input_sizes = [tuple(x.shape) for x in input_sample]
     model = torch.jit.trace(model, inputs, check_trace=False)
     size = len(model.save_to_buffer())
