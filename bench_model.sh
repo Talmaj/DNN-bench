@@ -51,7 +51,7 @@ cwd=$(pwd)
 if [[ $device == "cpu" ]]; then
   if [[ -n $pytorch ]]; then
     echo PyTorch
-    docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output pytorch:latest \
+    docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output toriml/pytorch:latest \
     python3 /bench $model --backend pytorch --repeat $repeat --number $number --warmup $warmup \
     --backend-meta onnx2pytorch --device $device --quantize $quantize \
     --output-path $output/"$name"-quant="$quantize"-"$device"-pytorch-onnx2pytorch.json
@@ -59,7 +59,7 @@ if [[ $device == "cpu" ]]; then
 
   if [[ -n $onnxruntime ]]; then
     echo OpenMP
-    docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output onnxruntime:latest \
+    docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output toriml/onnxruntime:latest \
     python3 /bench $model --backend onnxruntime --repeat $repeat --number $number --warmup $warmup \
     --backend-meta openmp --device $device --quantize $quantize \
     --output-path $output/"$name"-quant="$quantize"-"$device"-onnxruntime-openmp.json
@@ -83,7 +83,7 @@ if [[ $device == "cpu" ]]; then
 
   if [[ -n $tf ]]; then
     echo TensorFlow
-    docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output tensorflow:latest \
+    docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output toriml/tensorflow:latest \
     python3 /bench $model --backend tf --repeat $repeat --number $number --warmup $warmup \
     --backend-meta onnx_tf --device $device --quantize $quantize \
     --output-path $output/"$name"-quant="$quantize"-"$device"-tf-onnx_tf.json
@@ -93,7 +93,7 @@ if [[ $device == "cpu" ]]; then
 elif [[ $device == "gpu" ]]; then
     if [[ -n $pytorch ]]; then
     echo PyTorch
-    nvidia-docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output pytorch:latest \
+    nvidia-docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output toriml/pytorch:latest \
     python3 /bench $model --backend pytorch --repeat $repeat --number $number --warmup $warmup \
     --backend-meta onnx2pytorch --device $device --quantize $quantize \
     --output-path $output/"$name"-quant="$quantize"-"$device"-pytorch-onnx2pytorch.json
@@ -101,7 +101,7 @@ elif [[ $device == "gpu" ]]; then
 
   if [[ -n $ort_cuda ]]; then
     echo onnxruntime-cuda
-    nvidia-docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output onnxruntime:latest-cuda \
+    nvidia-docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output toriml/onnxruntime:latest-cuda \
     python3 /bench $model --backend onnxruntime --repeat $repeat --number $number --warmup $warmup \
     --backend-meta cuda --device $device --quantize $quantize \
     --output-path $output/"$name"-quant="$quantize"-"$device"-ort-cuda.json
@@ -109,7 +109,7 @@ elif [[ $device == "gpu" ]]; then
 
   if [[ -n $ort_tensorrt ]]; then
     echo onnxruntime-tensorrt
-    nvidia-docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output onnxruntime:latest-tensorrt \
+    nvidia-docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output toriml/onnxruntime:latest-tensorrt \
     python3 /bench $model --backend onnxruntime --repeat $repeat --number $number --warmup $warmup \
     --backend-meta tensorrt --device $device --quantize $quantize \
     --output-path $output/"$name"-quant="$quantize"-"$device"-ort-tensorrt.json
@@ -117,7 +117,7 @@ elif [[ $device == "gpu" ]]; then
 
   if [[ -n $tf ]]; then
     echo TensorFlow - $device
-    nvidia-docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output tensorflow:latest-gpu \
+    nvidia-docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output toriml/tensorflow:latest-gpu \
     python3 /bench $model --backend tf --repeat $repeat --number $number --warmup $warmup \
     --backend-meta onnx_tf --device $device --quantize $quantize \
     --output-path $output/"$name"-quant="$quantize"-"$device"-tf-onnx_tf.json
@@ -127,7 +127,7 @@ elif [[ $device == "gpu" ]]; then
 elif [[ $device == "arm" ]]; then
     if [[ -n $onnxruntime ]]; then
       echo onnxruntime-arm
-      docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output onnxruntime:arm64v8 \
+      docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output toriml/onnxruntime:arm64v8 \
       python3 /bench $model --backend onnxruntime --repeat $repeat --number $number --warmup $warmup \
       --backend-meta arm64v8 --device $device --quantize $quantize \
       --output-path $output/"$name"-quant="$quantize"-"$device"-onnxruntime-arm64v8.json
