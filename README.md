@@ -15,9 +15,15 @@ Replace `cpu` argument with `gpu` for nvidia-docker.
 #### Other
 - Install [docker](https://docs.docker.com/get-docker/).
 - Install [nvidia-docker](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
+- Add yourself to [docker group](https://docs.docker.com/engine/install/linux-postinstall/)
+  `sudo usermod -aG docker $USER` to run docker commands without sudo.
 
 ### Deep learning backends 
-Prepare docker images for various deep learning backends.
+You can use pre-compiled images from dockerhub. 
+They will be downloaded automatically when running `./bench_model.sh`  
+
+Optional.  
+Prepare docker images for various deep learning backends locally.
 ```
 ./prepare_images.sh cpu
 ```
@@ -32,7 +38,7 @@ Benchmark an onnx model against different backends:
 Possible backends:
 ```
   --tf              (with --device=cpu or gpu)
-  --onnxruntime     (with --device=cpu)
+  --onnxruntime     (with --device=cpu or arm)
   --openvino        (with --device=cpu)
   --pytorch         (with --device=cpu or gpu)
   --nuphar          (with --device=cpu)
@@ -91,6 +97,16 @@ is stored in a json format.
 - __std__: Standard deviation of an experiment run.
 - __data__: All measurements of the experiment runs.
 
-# Limitations
+# Limitations and known issues
 - `--quantize` flag not supported for `--ort-cuda`, `--ort-tensorrt` and `--tf`
 - Current version supports onnx models only.
+- The following docker images for CPU execution do not utilize all CPUs on Linux host: 
+  - onnxruntime with openvino, 
+  - onnxruntime with nuphar and
+  - pytorch
+  
+# Troubleshoot
+- If running tensorflow image fails due to onnx-tf conversion, 
+  re-build the image locally:
+  ```docker build -f dockerfiles/Dockerfile.tf -t toriml/tensorflow:latest .```
+
