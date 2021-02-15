@@ -43,8 +43,8 @@ output=${output:-$(pwd)/results}
 name=$(echo $(basename $model) | cut -f1 -d .)
 
 # Need absolute paths for mounting docker containers
-output=$(realpath output)
-model=$(realpath model)
+# output=$(realpath output)
+# model=$(realpath model)
 
 cwd=$(pwd)
 
