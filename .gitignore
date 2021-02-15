@@ -1,5 +1,5 @@
 .idea/
-results/
+results*/
 models/
 
 __pycache__/
