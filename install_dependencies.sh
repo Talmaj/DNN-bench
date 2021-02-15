@@ -7,6 +7,7 @@ if ! command -v docker &> /dev/null; then
   echo "Install docker"
   curl https://get.docker.com | sh \
     && sudo systemctl --now enable docker
+  sudo usermod -aG docker $USER
 fi
 
 if [[ $device == gpu ]]; then
