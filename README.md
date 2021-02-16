@@ -100,10 +100,11 @@ is stored in a json format.
 # Limitations and known issues
 - `--quantize` flag not supported for `--ort-cuda`, `--ort-tensorrt` and `--tf`
 - Current version supports onnx models only.
-- The following docker images for CPU execution do not utilize all CPUs on Linux host: 
-  - onnxruntime with openvino, 
-  - onnxruntime with nuphar and
+- The following docker images for CPU execution utilize only half of the CPUs on Linux
+  ec2 instances: 
+  - onnxruntime with openvino,
   - pytorch
+- onnxruntime with nuphar utilizes total count of CPUs - 1.
   
 # Troubleshoot
 - If running tensorflow image fails due to onnx-tf conversion, 
