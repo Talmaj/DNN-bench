@@ -11,6 +11,9 @@ if ! command -v docker &> /dev/null; then
 fi
 
 if [[ $device == gpu ]]; then
+  echo "Install cuda drivers"
+  sudo apt-get install -y nvidia-driver-460
+
   # Install nvidia-docker
   echo "Install nvidia-docker"
   distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
