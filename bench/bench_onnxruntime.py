@@ -1,7 +1,6 @@
 import os
 
 import numpy as np
-from onnx import version_converter
 import onnxruntime as ort
 
 from utils import get_type, get_shape
@@ -35,6 +34,7 @@ def benchmark_onnxruntime(
 
     if quantize:
         import onnx
+        from onnx import version_converter
         from onnxruntime.quantization import quantize_dynamic
 
         orig_model = onnx.load(path_to_model)
