@@ -23,16 +23,15 @@ commands: # a reusable command with parameters
             --repeat 10
             --number 1
             --warmup 1
-            --backend-meta onnx2pytorch
+            --backend-meta <<parameters.backend>>
             --device cpu
             --quantize <<parameters.quantize>>
             --output-path results/mobilenet.json
           name: Benchmark pytorch backend
-          no_output_timeout: 5m
       - run: test results/mobilenet.json
 
 jobs:
-  test-pytorch:
+  bench-pytorch-cpu:
     docker:
       - image: toriml/pytorch:latest
     parameters:
@@ -44,11 +43,72 @@ jobs:
           backend: "pytorch"
           quantize: <<parameters.quantize>>
 
+  bench-onnxruntime-openmp-cpu:
+    docker:
+      - image: toriml/onnxruntime:latest
+    parameters:
+      quantize:
+        default: "0"
+        type: string
+    steps:
+      - benchmark:
+          backend: "onnxruntime"
+          quantize: <<parameters.quantize>>
+
+  bench-onnxruntime-openvino-cpu:
+    docker:
+      - image: mcr.microsoft.com/azureml/onnxruntime:latest-openvino-cpu
+    parameters:
+      quantize:
+        default: "0"
+        type: string
+    steps:
+      - benchmark:
+          backend: "onnxruntime"
+          quantize: <<parameters.quantize>>
+
+  bench-onnxruntime-nuphar-cpu:
+    docker:
+      - image: mcr.microsoft.com/azureml/onnxruntime:latest-nuphar
+    parameters:
+      quantize:
+        default: "0"
+        type: string
+    steps:
+      - benchmark:
+          backend: "onnxruntime"
+          quantize: <<parameters.quantize>>
+
+  bench-tensorflow-cpu:
+    docker:
+      - image: toriml/tensorflow:latest
+    parameters:
+      quantize:
+        default: "0"
+        type: string
+    steps:
+      - benchmark:
+          backend: "tf"
+          quantize: <<parameters.quantize>>
+
 workflows:
   main:
     jobs:
-      - test-pytorch:
+      - bench-pytorch-cpu:
           matrix:
             parameters:
               quantize: ["0", "1"]
+      - bench-onnxruntime-openmp-cpu:
+          matrix:
+            parameters:
+              quantize: [ "0", "1" ]
+      - bench-onnxruntime-openvino-cpu:
+          matrix:
+            parameters:
+              quantize: [ "0", "1" ]
+      - bench-onnxruntime-nuphar-cpu:
+          matrix:
+            parameters:
+              quantize: [ "0", "1" ]
+      - bench-tensorflow-cpu
 
