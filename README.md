@@ -1,8 +1,10 @@
-# Tori Bench
+# DNN Bench
+![GitHub](https://img.shields.io/github/license/ToriML/DNN-bench)
+[![ToriML](https://circleci.com/gh/ToriML/DNN-bench.svg?style=shield)](https://app.circleci.com/pipelines/github/ToriML/DNN-bench)
 
-A library to benchmark your deep learning model against various frameworks and 
+A library to benchmark your deep learning models against various frameworks and 
 backends.  
-The model is benchmarked within the docker containers
+Models are benchmarked within docker containers.
 
 ## Installation
 ### Dependencies
@@ -97,17 +99,19 @@ is stored in a json format.
 - __std__: Standard deviation of an experiment run.
 - __data__: All measurements of the experiment runs.
 
-# Limitations and known issues
+## Limitations and known issues
 - `--quantize` flag not supported for `--ort-cuda`, `--ort-tensorrt` and `--tf`
 - Current version supports onnx models only.
 - The following docker images for CPU execution utilize only half of the CPUs on Linux
   ec2 instances: 
   - onnxruntime with openvino,
   - pytorch
-- onnxruntime with nuphar utilizes total count of CPUs - 1.
+- onnxruntime with nuphar utilizes total count of CPUs - 1 on Linux
+  ec2 instances.
   
-# Troubleshoot
+## Troubleshoot
 - If running tensorflow image fails due to onnx-tf conversion, 
   re-build the image locally:
   ```docker build -f dockerfiles/Dockerfile.tf -t toriml/tensorflow:latest .```
-
+- If you have permission errors to run docker, add yourself to docker group
+  `sudo usermod -aG docker $USER` and re-login `su - $USER`.
