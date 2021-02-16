@@ -101,7 +101,7 @@ elif [[ $device == "gpu" ]]; then
 
   if [[ -n $ort_cuda ]]; then
     echo onnxruntime-cuda
-    nvidia-docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output toriml/onnxruntime:latest-cuda \
+    nvidia-docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output mcr.microsoft.com/azureml/onnxruntime:latest-cuda \
     python3 /bench $model --backend onnxruntime --repeat $repeat --number $number --warmup $warmup \
     --backend-meta cuda --device $device --quantize $quantize \
     --output-path $output/"$name"-quant="$quantize"-"$device"-ort-cuda.json
@@ -109,7 +109,7 @@ elif [[ $device == "gpu" ]]; then
 
   if [[ -n $ort_tensorrt ]]; then
     echo onnxruntime-tensorrt
-    nvidia-docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output toriml/onnxruntime:latest-tensorrt \
+    nvidia-docker run --rm -v $cwd/bench:/bench -v $model:$model -v $output:$output mcr.microsoft.com/azureml/onnxruntime:latest-tensorrt \
     python3 /bench $model --backend onnxruntime --repeat $repeat --number $number --warmup $warmup \
     --backend-meta tensorrt --device $device --quantize $quantize \
     --output-path $output/"$name"-quant="$quantize"-"$device"-ort-tensorrt.json
