@@ -1,12 +1,12 @@
 version: 2.1
 
-jobs:
-  test-pytorch:
+commands: # a reusable command with parameters
+  benchmark:
     parameters:
+      backend:
+        type: string
       quantize:
         type: string
-    docker:
-      - image: toriml/pytorch:latest
     steps:
       - checkout
       - run:
@@ -19,17 +19,30 @@ jobs:
       - run:
           command: >
             python3 ./bench mobilenetv2-1.0.onnx
-            --backend pytorch
+            --backend <<parameters.backend>>
             --repeat 10
             --number 1
             --warmup 1
             --backend-meta onnx2pytorch
             --device cpu
-            --quantize << parameters.quantize >>
+            --quantize <<parameters.quantize>>
             --output-path results/mobilenet.json
           name: Benchmark pytorch backend
           no_output_timeout: 5m
       - run: test results/mobilenet.json
+
+jobs:
+  test-pytorch:
+    docker:
+      - image: toriml/pytorch:latest
+    parameters:
+      quantize:
+        default: "0"
+        type: string
+    steps:
+      - benchmark:
+          backend: "pytorch"
+          quantize: <<parameters.quantize>>
 
 workflows:
   main:
