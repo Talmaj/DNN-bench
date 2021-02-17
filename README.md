@@ -1,5 +1,5 @@
 # DNN Bench
-![GitHub](https://img.shields.io/github/license/ToriML/DNN-bench)
+![GitHub](https://img.shields.io/github/license/ToriML/dnn-bench)
 [![ToriML](https://circleci.com/gh/ToriML/DNN-bench.svg?style=shield)](https://app.circleci.com/pipelines/github/ToriML/DNN-bench)
 
 A library to benchmark your deep learning models against various frameworks and 
