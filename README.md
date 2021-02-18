@@ -2,9 +2,14 @@
 ![GitHub](https://img.shields.io/github/license/ToriML/dnn-bench)
 [![ToriML](https://circleci.com/gh/ToriML/DNN-bench.svg?style=shield)](https://app.circleci.com/pipelines/github/ToriML/DNN-bench)
 
-A library to benchmark your deep learning models against various frameworks and 
-backends.  
-Models are benchmarked within docker containers.
+When deploying a trained DL model one usually faces question like “to which hardware should I deploy my model?”, “which backend should I use?”,  “should I apply an optimisation technique, e.g. quantisation, before I deploy it?”, etc. The answer to these questions depends on the particular use-cases, and can thus be very different. 
+
+DNN Bench is a library to benchmark your deep learning models against various frameworks and 
+backends.
+
+The goal is to make it easy for developers to choose the most optimal deployment configuration (optimization on/off, backend, hardware) for their particular use-cases.
+
+Side note: Models are benchmarked within docker containers.
 
 ## Installation
 ### Dependencies
