@@ -24,21 +24,20 @@ on
 an AWS EC2 CPU compute instance. 
 It shows number of processed samples per second, where more is better.
 
-
 ![Bert-CPU](docs/figs/bertsquad-10.onnx-c5a.4xlarge.png)
 ![Resnet-CPU](docs/figs/resnet50v1.onnx-c5a.4xlarge.png)
 
 See further [analysis](docs/analysis.md) for more models benchmarked on different hardware.
 
 ## Supported devices and backends
-Currently the library supports the following devices and backends:
 
+|        | PyTorch      | TensorFlow | ONNX-Runtime  | OpenVINO* | Nuphar*  | CUDA*  | TensorRT* |
+|--------|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|
+|  CPU   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |                    |                    |
+|  GPU   | :white_check_mark: | :white_check_mark: |                    |                    |                    | :white_check_mark: | :white_check_mark: |
+|  ARM   |                    |                    | :white_check_mark: |                    |                    |                    |                    |
 
-|        | PyTorch      | TensorFlow | ONNX-Runtime <br> OpenMP  | ONNX-Runtime <br> OpenVINO  | ONNX-Runtime <br> Nuphar  | ONNX-Runtime <br> CUDA  | ONNX-Runtime <br> TensorRT |
-|--------|--------------------|--------------------|--------------------|--------------------|--------------------|--------------------|--------------------|
-|  CPU   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |                    |                    |
-|  GPU   | :heavy_check_mark: | :heavy_check_mark: |                    |                    |                    | :heavy_check_mark: | :heavy_check_mark: |
-|  ARM   |                    |                    | :heavy_check_mark: |                    |                    |                    |                    |
+*Marked backends are executed within ONNX-Runtime framework.
 
 ## Installation
 ### Dependencies

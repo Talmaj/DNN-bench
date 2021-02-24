@@ -65,7 +65,7 @@ one backend sometimes another.
 # Conclusion
 If your application requires a large amount of requests per second the GPU seems 
 to be the cheapest option to choose from. If your demands are lower, a cheaper 
-compute instance or a group of them might be a cheaper option. See the graph below.
+compute instance or a group of them might be a better option. See the graph below.
 Red dashed lines represent two applications with different requirements, 
 y-axis is in logscale.  
 
