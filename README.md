@@ -3,7 +3,7 @@
 [![ToriML](https://circleci.com/gh/ToriML/DNN-bench.svg?style=shield)](https://app.circleci.com/pipelines/github/ToriML/DNN-bench)
 
 DNN Bench is a library that lets you benchmark your deep learning models against various frameworks and 
-backends, with a single line of code.
+backends, with a single command.
 
 With DNN Bench you can answer questions like:
 - to which hardware should I deploy my model?
@@ -13,6 +13,32 @@ With DNN Bench you can answer questions like:
 The goal is to make it easy for developers to choose the most optimal deployment configuration (optimization on/off, backend, hardware) for their particular use-cases.
 
 Side note: Models are benchmarked within docker containers.
+
+## Example
+Performance of 
+[BERT-Squad](https://github.com/onnx/models/tree/master/text/machine_comprehension/bert-squad)
+and
+[ResNet](https://github.com/onnx/models/tree/master/vision/classification/resnet)
+on 
+[c5a.4xlarge](https://aws.amazon.com/about-aws/whats-new/2020/06/now-available-amazon-ec2-c5a-instances-featuring-2nd-generation-amd-epyc-processors/),
+an AWS EC2 CPU compute instance. 
+It shows number of processed samples per second, where more is better.
+
+
+![Bert-CPU](docs/figs/bertsquad-10.onnx-c5a.4xlarge.png)
+![Resnet-CPU](docs/figs/resnet50v1.onnx-c5a.4xlarge.png)
+
+See further [analysis](docs/analysis.md) for more models benchmarked on different hardware.
+
+## Supported devices and backends
+Currently the library supports the following devices and backends:
+
+
+|        | PyTorch      | TensorFlow | ONNX-Runtime <br> OpenMP  | ONNX-Runtime <br> OpenVINO  | ONNX-Runtime <br> Nuphar  | ONNX-Runtime <br> CUDA  | ONNX-Runtime <br> TensorRT |
+|--------|--------------------|--------------------|--------------------|--------------------|--------------------|--------------------|--------------------|
+|  CPU   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |                    |                    |
+|  GPU   | :heavy_check_mark: | :heavy_check_mark: |                    |                    |                    | :heavy_check_mark: | :heavy_check_mark: |
+|  ARM   |                    |                    | :heavy_check_mark: |                    |                    |                    |                    |
 
 ## Installation
 ### Dependencies
@@ -106,6 +132,15 @@ is stored in a json format.
 - __mean__: Mean time of an experiment run.
 - __std__: Standard deviation of an experiment run.
 - __data__: All measurements of the experiment runs.
+
+### Plotting
+A simple plotting utility to generate quick plots is available in 
+[plot_results.py](./vis/plot_results.py).
+- Dependencies:  
+```pip install seaborn matplotlib pandas```
+- Usage:  
+```python vis/plot_results.py results_dir plots_dir```
+
 
 ## Limitations and known issues
 - `--quantize` flag not supported for `--ort-cuda`, `--ort-tensorrt` and `--tf`
