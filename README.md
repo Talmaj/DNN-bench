@@ -143,7 +143,8 @@ A simple plotting utility to generate quick plots is available in
 
 ## Limitations and known issues
 - `--quantize` flag not supported for `--ort-cuda`, `--ort-tensorrt` and `--tf`
-- Current version supports onnx models only.
+- Current version supports onnx models only. To convert models from other frameworks  
+  follow [these](https://github.com/onnx/tutorials#converting-to-onnx-format) examples.
 - The following docker images for CPU execution utilize only half of the CPUs on Linux
   ec2 instances: 
   - onnxruntime with openvino,
