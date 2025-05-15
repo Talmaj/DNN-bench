@@ -1,9 +1,7 @@
 # DNN Bench
 ![GitHub](https://img.shields.io/github/license/ToriML/dnn-bench)
-[![ToriML](https://circleci.com/gh/ToriML/DNN-bench.svg?style=shield)](https://app.circleci.com/pipelines/github/ToriML/DNN-bench)
 
-DNN Bench is a library that lets you benchmark your deep learning models against various frameworks and 
-backends, with a single command.
+DNN Bench is a library that lets you benchmark inference speed of your deep learning models against various frameworks, hardware and execution providers with a single command. See [Comprehensive Analysis](docs/analysis.md).
 
 With DNN Bench you can answer questions like:
 - to which hardware should I deploy my model?
@@ -27,7 +25,7 @@ It shows number of processed samples per second, where more is better.
 ![Bert-CPU](docs/figs/bertsquad-10.onnx-c5a.4xlarge.png)
 ![Resnet-CPU](docs/figs/resnet50v1.onnx-c5a.4xlarge.png)
 
-See further [analysis](docs/analysis.md) for more models benchmarked on different hardware.
+See [Comprehensive Analysis](docs/analysis.md) for more models benchmarked on different hardware.
 
 ## Supported devices and backends
 
